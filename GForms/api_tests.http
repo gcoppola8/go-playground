@@ -1,0 +1,74 @@
+### Variables
+@baseUrl = http://localhost:8080
+
+@formId = 474204b5-0bc5-40e4-aa35-9d7faed4aec5
+@questionId1 = 525c25d0-27c1-4612-848a-02baac82d16e
+@questionId2 = b2894b78-d46c-41e5-b46d-fbefc60b10ee
+
+### Create a new Form
+# Creates a form with two questions.
+POST {{baseUrl}}/forms
+Content-Type: application/json
+
+{
+  "title": "Customer Feedback Survey",
+  "description": "Please provide your valuable feedback.",
+  "creator_user_id": "user_123",
+  "questions": [
+    {
+      "text": "How satisfied were you with our service?",
+      "type": "rating",
+      "options": ["1", "2", "3", "4", "5"],
+      "is_required": true
+    },
+    {
+      "text": "Any additional comments?",
+      "type": "text",
+      "is_required": false
+    }
+  ]
+}
+
+### List all Users
+POST {{baseUrl}}/api/account/verify?verificationCode=6bfafa78-237f-4169-a239-b11d23053c1e
+Content-Type: application/json
+
+{
+}
+
+
+### List all Forms
+# Retrieves a list of all created forms.
+GET {{baseUrl}}/forms
+
+### Get a specific Form
+# Retrieves details for a single form using its ID.
+# NOTE: Replace {{formId}} with an ID obtained from creating or listing forms.
+GET {{baseUrl}}/forms/{{formId}}
+
+### Submit a Response to a Form
+# Submits answers for a specific form.
+POST {{baseUrl}}/forms/{{formId}}/responses
+Content-Type: application/json
+
+{
+  "respondent_user_id": "user_456",
+  "answers": [
+    {
+      "question_id": "{{questionId1}}",
+      "value": "5"
+    },
+    {
+      "question_id": "{{questionId2}}",
+      "value": "The service was excellent!"
+    }
+  ]
+}
+
+### Get all Responses for a specific Form
+# Retrieves all responses submitted for a particular form.
+# NOTE: Replace {{formId}} with the target Form ID.
+GET {{baseUrl}}/forms/{{formId}}/responses
+
+
+

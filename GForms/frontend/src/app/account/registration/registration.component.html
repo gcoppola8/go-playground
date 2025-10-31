@@ -1,0 +1,101 @@
+<div class="clr-row clr-justify-content-center">
+    <div class="clr-col-6">
+        <div class="card">
+            <div class="card-header">Login</div>
+            <div class="card-block">
+                <form (ngSubmit)="onSubmit()" [formGroup]="registrationForm">
+
+                    <div class="clr-form-control clr-row">
+                        <label for="username" class="clr-control-label clr-col-12">Username</label>
+                        <div class="clr-input-wrapper clr-col-12">
+                            <input type="text" class="clr-input" id="username" required formControlName="username">
+                            <div *ngIf="registrationForm.get('username')?.invalid && (registrationForm.get('username')?.dirty || registrationForm.get('username')?.touched)"
+                                class="text-danger">
+                                Username is required.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="clr-form-control clr-row">
+                        <label for="email" class="clr-control-label clr-col-12">Email</label>
+                        <div class="clr-input-wrapper clr-col-12">
+                            <input type="email" class="clr-input" id="email" required email formControlName="email">
+                            <div *ngIf="registrationForm.get('email')?.invalid && (registrationForm.get('email')?.dirty || registrationForm.get('email')?.touched)"
+                                class="text-danger">
+                                <div *ngIf="registrationForm.get('email')?.errors?.['required']">Email is required.
+                                </div>
+                                <div *ngIf="registrationForm.get('email')?.errors?.['email']">Invalid email format.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="clr-form-control clr-row">
+                        <label for="password" class="clr-control-label clr-col-12">Password</label>
+                        <div class="clr-input-wrapper clr-col-12">
+                            <input type="password" class="clr-input" id="password" required formControlName="password">
+                            <div *ngIf="registrationForm.get('password')?.invalid && (registrationForm.get('password')?.dirty || registrationForm.get('password')?.touched)"
+                                class="text-danger">
+                                Password is required.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="clr-form-control clr-row">
+                        <label for="password" class="clr-control-label clr-col-12">Repeat password</label>
+                        <div class="clr-input-wrapper clr-col-12">
+                            <input type="password" class="clr-input" id="confirm-password" required
+                                formControlName="confirmPassword" (change)="onPasswordChange()">
+                            <div *ngIf="registrationForm.get('confirmPassword')?.invalid && (registrationForm.get('confirmPassword')?.dirty || registrationForm.get('confirmPassword')?.touched || this.passwordMatch)"
+                                class="text-danger">
+                                Passwords don't match
+                            </div>
+                        </div>
+                        <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+                            {{ errorMessage }}
+                        </div>
+                    </div>
+
+                    <div class="clr-form-control clr-row clr-col-12">
+                        <button type="submit" class="btn btn-primary"
+                            [disabled]="registrationForm.get('email')?.value == '' || registrationForm.invalid">Login</button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@if (this.showSuccessModal) {
+<!-- Success Modal -->
+<div class="modal">
+    <div class="modal-dialog" role="dialog" aria-hidden="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <!-- Removed close button from header as alert provides context -->
+                <h3 class="modal-title">Registration Results:</h3>
+            </div>
+            <div class="modal-body">
+                <p>Your account has been created successfully. You can now log in.</p>
+            </div>
+            <!-- Success Alert within Modal -->
+            <div class="alert alert-success" role="alert">
+                <div class="alert-items">
+                    <div class="alert-item static">
+                        <div class="alert-icon-wrapper">
+                            <!-- Using check-circle for success -->
+                            <cds-icon class="alert-icon" shape="check-circle" aria-hidden="true"></cds-icon>
+                        </div>
+                        <span class="alert-text">Registration Successful!</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <!-- Only OK button needed for confirmation -->
+                <button class="btn btn-primary" type="button" (click)="closeSuccessModal()">Ok</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-backdrop" aria-hidden="true"></div>
+}

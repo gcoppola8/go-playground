@@ -1,0 +1,177 @@
+<div class="clr-row">
+    <div class="clr-col-12">
+
+        <!-- Loading State -->
+        <div *ngIf="isLoading" class="card">
+            <div class="card-block">
+                <div class="spinner spinner-lg">
+                    Loading form...
+                </div>
+            </div>
+        </div>
+
+        <!-- Error State -->
+        <clr-alert *ngIf="error && !isLoading" [clrAlertType]="'danger'" [clrAlertClosable]="false">
+            <clr-alert-item>
+                <span class="alert-text">{{ error }}</span>
+            </clr-alert-item>
+        </clr-alert>
+
+        <!-- Main Form -->
+        <div *ngIf="form && !isLoading && !error" class="card">
+            <div class="card-header">
+                <h3>{{ form.title }}</h3>
+                <p *ngIf="form.description">{{ form.description }}</p>
+            </div>
+
+            <div class="card-block">
+                <form clrForm class="clr-form clr-form-horizontal" [formGroup]="QuestionsForm"
+                    (ngSubmit)="sendResponse()">
+
+                    <div *ngFor="let question of form.questions" class="clr-form-control form-group">
+
+                        <!-- Text Input -->
+                        <div *ngIf="question.type === 'text'">
+                            <label>
+                                {{ question.text }}
+                                <span *ngIf="question.required" class="clr-required-mark"></span>
+                            </label>
+                            <input type="text" clrInput [formControlName]="question.id"
+                                [placeholder]="question.placeholder || 'Enter your answer'">
+                            <clr-control-helper *ngIf="question.description">{{ question.description
+                                }}</clr-control-helper>
+                        </div>
+
+                        <!-- Email Input -->
+                        <div *ngIf="question.type === 'email'">
+                            <label>
+                                {{ question.text }}
+                                <span *ngIf="question.required" class="clr-required-mark">*</span>
+                            </label>
+                            <input type="email" clrInput [formControlName]="question.id"
+                                [placeholder]="question.placeholder || 'Enter your email'">
+                            <clr-control-helper *ngIf="question.description">{{ question.description
+                                }}</clr-control-helper>
+                        </div>
+
+                        <!-- Number Input -->
+                        <div *ngIf="question.type === 'number'">
+                            <label>
+                                {{ question.text }}
+                                <span *ngIf="question.required" class="clr-required-mark">*</span>
+                            </label>
+                            <input type="number" clrInput [formControlName]="question.id"
+                                [placeholder]="question.placeholder || 'Enter a number'">
+                            <clr-control-helper *ngIf="question.description">{{ question.description
+                                }}</clr-control-helper>
+                        </div>
+
+                        <!-- Textarea -->
+                        <div *ngIf="question.type === 'textarea'">
+                            <label>
+                                {{ question.text }}
+                                <span *ngIf="question.required" class="clr-required-mark">*</span>
+                            </label>
+                            <textarea clrTextarea [formControlName]="question.id"
+                                [placeholder]="question.placeholder || 'Enter your answer'" rows="4">
+              </textarea>
+                            <clr-control-helper *ngIf="question.description">{{ question.description
+                                }}</clr-control-helper>
+                        </div>
+
+                        <!-- Date Input -->
+                        <div *ngIf="question.type === 'date'">
+                            <label>
+                                {{ question.text }}
+                                <span *ngIf="question.required" class="clr-required-mark">*</span>
+                            </label>
+                            <input type="date" clrInput [formControlName]="question.id">
+                            <clr-control-helper *ngIf="question.description">{{ question.description
+                                }}</clr-control-helper>
+                        </div>
+
+                        <!-- Select Dropdown -->
+                        <div *ngIf="question.type === 'select'">
+                            <label>
+                                {{ question.text }}
+                                <span *ngIf="question.required" class="clr-required-mark">*</span>
+                            </label>
+                            <select clrSelect [formControlName]="question.id">
+                                <option value="">Choose an option...</option>
+                                <option *ngFor="let option of getCheckboxOptions(question)" [value]="option">
+                                    {{ option }}
+                                </option>
+                            </select>
+                            <clr-control-helper *ngIf="question.description">{{ question.description
+                                }}</clr-control-helper>
+                        </div>
+
+                        <!-- Radio Buttons -->
+                        <div *ngIf="question.type === 'radio'">
+                            <label>
+                                {{ question.text }}
+                                <span *ngIf="question.required" class="clr-required-mark">*</span>
+                            </label>
+                            <clr-control-helper *ngIf="question.description">{{ question.description
+                                }}</clr-control-helper>
+                            <clr-radio-container>
+                                <clr-radio-wrapper *ngFor="let option of getCheckboxOptions(question)">
+                                    <input type="radio" clrRadio [name]="'question-' + question.id" [value]="option"
+                                        [formControlName]="question.id">
+                                    <label>{{ option }}</label>
+                                </clr-radio-wrapper>
+                            </clr-radio-container>
+                        </div>
+
+                        <!-- Checkboxes -->
+                        <div *ngIf="question.type === 'checkbox'">
+                            <label>
+                                {{ question.text }}
+                                <span *ngIf="question.required" class="clr-required-mark">*</span>
+                            </label>
+                            <clr-control-helper *ngIf="question.description">{{ question.description
+                                }}</clr-control-helper>
+                            <clr-checkbox-container>
+                                <clr-checkbox-wrapper *ngFor="let option of getCheckboxOptions(question)">
+                                    <input type="checkbox" clrCheckbox
+                                        [checked]="isCheckboxOptionSelected(question.id, option)"
+                                        (change)="toggleCheckboxOption(question.id, option)">
+                                    <label>{{ option }}</label>
+                                </clr-checkbox-wrapper>
+                            </clr-checkbox-container>
+                        </div>
+                    </div>
+
+                    <br><br><br>
+                    <!-- Form Actions -->
+                    <div class="card-footer clr-form-actions">
+                        <button type="button" class="btn btn-outline" [routerLink]="['/forms', form.id]">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-primary" [disabled]="QuestionsForm.invalid">
+                            Submit Response
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+
+        <!-- No Questions State -->
+        <div *ngIf="form && !isLoading && !error && (!form.questions || form.questions.length === 0)" class="card">
+            <div class="card-block">
+                <div class="alert alert-info">
+                    <div class="alert-items">
+                        <div class="alert-item static">
+                            <div class="alert-icon-wrapper">
+                                <clr-icon class="alert-icon" shape="info-circle"></clr-icon>
+                            </div>
+                            <span class="alert-text">This form doesn't have any questions yet.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

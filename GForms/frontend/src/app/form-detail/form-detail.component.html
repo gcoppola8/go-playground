@@ -1,0 +1,68 @@
+<div class="form-detail-container">
+    <a routerLink="/forms" class="back-link">
+      <cds-icon shape="arrow" direction="left"></cds-icon> Back to Forms List
+    </a>
+  
+    <div *ngIf="isLoading" class="loading-indicator">
+      Loading form details... Please wait.
+    </div>
+  
+    <div *ngIf="error && !isLoading" class="error-message">
+      <p>Error: {{ error }}</p>
+      <button (click)="retryLoad()" class="btn btn-warning">Retry</button>
+    </div>
+  
+    <div *ngIf="form && !isLoading && !error">
+      <h1>{{ form.title }}</h1>
+      <p>{{ form.description }}</p>
+      <small>Created by: {{ form.creator_user_id }} | Created at: {{ form.created_at | date:'medium' }}</small>
+  
+      <section class="questions-section">
+        <h2>Questions Structure</h2>
+        <ul *ngIf="form.questions && form.questions.length > 0; else noQuestions" class="question-list">
+          <li *ngFor="let question of form.questions; let i = index" class="question-item">
+            <strong>Q{{ i + 1 }}: {{ question.text }}</strong>
+            <span>(Type: {{ question.type }})</span>
+            <span *ngIf="question.is_required" class="required-indicator"> * Required</span>
+          </li>
+        </ul>
+        <ng-template #noQuestions>
+          <p>This form currently has no questions defined.</p>
+        </ng-template>
+      </section>
+  
+      <div class="actions-section">
+        <button [routerLink]="['/forms', form.id, 'responses']" class="btn btn-primary">View Responses</button>
+        <button class="btn btn-warning" [disabled]="form.questions === undefined || form.questions.length === 0" (click)="sendResponse()">Generate fake Response</button>
+        <button class="btn btn-info" [routerLink]="['/forms', form.id, 'respond']">Respond to Form</button>
+        <button class="btn btn-secondary" [routerLink]="['/forms', form.id, 'questions']">Add questions</button>
+      </div>
+
+      <section class="responses-section">
+        <h2>Submitted Responses</h2>
+        <!-- Response listing logic will go here -->
+        <div *ngIf="responses.length > 0">
+          <div class="responses-list-container">
+
+           <p>Displaying {{ responses.length }} response(s).</p>
+           <ul>
+             <li *ngFor="let response of responses">
+               Response ID: {{ response.id }} - Submitted: {{ response.created_at | date:'medium' }}
+             </li>
+           </ul>
+        </div>
+        <div *ngIf="responses.length === 0">
+           <p>No responses have been submitted for this form yet.</p>
+        </div>
+         <!-- Add loading/error handling specific to responses if loaded separately -->
+          </div>
+      </section>
+  
+    </div>
+  
+    <div *ngIf="!form && !isLoading && !error">
+      <p>Form data could not be loaded.</p>
+    </div>
+  
+  </div>
+  

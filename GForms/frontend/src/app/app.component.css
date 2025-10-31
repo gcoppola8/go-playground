@@ -1,0 +1,74 @@
+.home-container {
+    padding: 20px;
+    font-family: sans-serif;
+  }
+  
+  .loading-indicator,
+  .error-message,
+  .form-list p {
+    margin-top: 20px;
+    text-align: center;
+    font-style: italic;
+  }
+  
+  .error-message {
+    color: #d32f2f; /* Rosso scuro per gli errori */
+    border: 1px solid #d32f2f;
+    padding: 15px;
+    border-radius: 4px;
+    background-color: #ffebee;
+  }
+  
+  .error-message button {
+    margin-left: 10px;
+    padding: 5px 10px;
+    cursor: pointer;
+  }
+  
+  .form-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+  }
+  
+  .form-item {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 15px;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .form-item h2 {
+    margin-top: 0;
+    margin-bottom: 5px;
+    color: #333;
+  }
+  
+  .form-item p {
+    margin-bottom: 10px;
+    color: #555;
+    font-style: normal; /* Sovrascrive lo stile italico generico */
+    text-align: left;
+  }
+  
+  .form-item small {
+    color: #777;
+    display: block; /* Per farla andare a capo */
+    margin-top: 10px;
+  }
+  
+  .form-item a {
+    display: inline-block;
+    margin-top: 10px;
+    text-decoration: none;
+    color: #007bff;
+    font-weight: bold;
+  }
+  
+  .form-item a:hover {
+    text-decoration: underline;
+  }
+  
+  

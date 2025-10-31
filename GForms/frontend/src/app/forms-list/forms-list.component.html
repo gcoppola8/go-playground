@@ -1,0 +1,40 @@
+<h2>Elenco dei Forms</h2>
+
+<div class="clr-row" style="margin: 30px">
+  <div class="clr-col-lg-6 clr-col-md-8 clr-col-12">
+    <a routerLink="/forms/new" class="btn btn-primary">
+      <cds-icon shape="plus"></cds-icon> Crea Nuovo Form
+    </a>
+  </div>
+</div>
+
+<div class="clr-row clr-justify-content-start" *ngIf="forms && forms.length > 0; else noForms" style="margin:30px">
+  <div *ngFor="let form of forms" class="clr-col-lg-4 clr-col-md-6 clr-col-12">
+    <clr-card class="card-clickable">
+      <div class="card-block">
+        <p class="card-text">
+          {{ form.title }}
+        </p>
+      </div>
+      <div class="card-footer">
+        <a [routerLink]="['/forms', form.id]" class="btn btn-sm btn-link">Visualizza</a>
+      </div>
+    </clr-card>
+  </div>
+</div>
+
+<ng-template #noForms>
+  <div class="clr-row">
+    <div class="clr-col-12">
+      <clr-alert [clrAlertType]="'info'" [clrAlertClosable]="false">
+          <clr-alert-item>
+              <span class="alert-text">
+                  Nessun form trovato. Creane uno nuovo utilizzando il pulsante qui sopra!
+              </span>
+          </clr-alert-item>
+      </clr-alert>
+    </div>
+  </div>
+</ng-template>
+
+<div style="margin-bottom: 20px;"></div>

@@ -1,0 +1,21 @@
+.responses-list-container {
+  margin-top: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  height: 300px;
+  overflow: auto;
+}
+
+.responses-list-container h3 {
+  margin-bottom: 10px;
+}
+
+.responses-list-container ul {
+  list-style: none;
+  padding: 0;
+}
+
+.responses-list-container li {
+  margin-bottom: 5px;
+}

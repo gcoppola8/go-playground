@@ -1,0 +1,12 @@
+# docker-compose.debug.yml
+# Extends docker-compose.yml for debugging the backend using 'extends'
+
+services:
+  backend:
+    extends:
+      file: docker-compose.yml # Specify the base file
+      service: backend        # Specify the service to extend from the base file
+    build:
+      dockerfile: Dockerfile.debug
+    ports:
+      - "4000:4000"

@@ -1,0 +1,21 @@
+# Stage 1: Build the Go application
+FROM golang:1.24-alpine
+WORKDIR /app
+
+# Copy go module files and download dependencies first to leverage cache
+COPY go.mod go.sum ./
+RUN go mod download
+
+# Copy the rest of the source code
+COPY . .
+
+# Build the application using the argument
+RUN CGO_ENABLED=0 GOOS=linux go build -gcflags "all=-N -l" -a -installsuffix cgo -o gform .
+
+# Expose the port the Go application listens on (e.g., 8080)
+EXPOSE 8080 4000
+
+RUN CGO_ENABLED=0 go install -ldflags "-s -w -extldflags '-static'" github.com/go-delve/delve/cmd/dlv@latest
+
+# Command to run the executable using the argument
+CMD [ "/go/bin/dlv", "--listen=:4000", "--headless=true", "--log=true", "--accept-multiclient", "--api-version=2", "exec", "./gform"]

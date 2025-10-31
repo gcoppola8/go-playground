@@ -1,0 +1,350 @@
+openapi: 3.0.3
+info:
+  title: Form and Response API
+  description: API for creating forms with questions and collecting responses.
+  version: 1.0.0
+
+servers:
+  - url: 'http://localhost:8080'
+    description: Local Development Server
+
+paths:
+  /forms:
+    get:
+      summary: List all Forms
+      description: Retrieves a list of all created forms.
+      operationId: listForms
+      responses:
+        '200':
+          description: A list of forms.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Form'
+    post:
+      summary: Create a new Form
+      description: Creates a form with questions.
+      operationId: createForm
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateFormRequest'
+      responses:
+        '201':
+          description: Form created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Form' # Typically returns the created resource
+        '400':
+          description: Invalid input
+
+  /forms/{formId}:
+    get:
+      summary: Get a specific Form
+      description: Retrieves details for a single form using its ID.
+      operationId: getFormById
+      parameters:
+        - name: formId
+          in: path
+          description: ID of the form to retrieve.
+          required: true
+          schema:
+            type: string
+            format: uuid # Assuming UUID format for IDs
+          examples:
+            example1:
+              value: 9314334a-0446-459b-8f89-59cd5f64f027
+      responses:
+        '200':
+          description: Form details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Form'
+        '404':
+          description: Form not found.
+
+  /forms/{formId}/responses:
+    get:
+      summary: Get all Responses for a specific Form
+      description: Retrieves all responses submitted for a particular form.
+      operationId: getFormResponses
+      parameters:
+        - name: formId
+          in: path
+          description: ID of the form to get responses for.
+          required: true
+          schema:
+            type: string
+            format: uuid
+          examples:
+            example1:
+              value: 9314334a-0446-459b-8f89-59cd5f64f027
+      responses:
+        '200':
+          description: A list of responses for the form.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Response'
+        '404':
+          description: Form not found.
+    post:
+      summary: Submit a Response to a Form
+      description: Submits answers for a specific form.
+      operationId: submitFormResponse
+      parameters:
+        - name: formId
+          in: path
+          description: ID of the form to submit a response for.
+          required: true
+          schema:
+            type: string
+            format: uuid
+          examples:
+            example1:
+              value: 9314334a-0446-459b-8f89-59cd5f64f027
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubmitResponseRequest'
+      responses:
+        '201':
+          description: Response submitted successfully.
+          content:
+            application/json:
+              schema:
+                type: object # Assuming it returns an object with the new response ID
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                    description: Unique identifier for the submitted response.
+        '400':
+          description: Invalid input or form ID.
+        '404':
+          description: Form not found.
+
+
+components:
+  schemas:
+    Form:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the form.
+        title:
+          type: string
+          description: The title of the form.
+          example: "Customer Feedback Survey"
+        description:
+          type: string
+          description: A brief description of the form.
+          nullable: true
+          example: "Please provide your valuable feedback."
+        creator_user_id:
+          type: string
+          description: The ID of the user who created the form.
+          example: "user_123"
+        created_at:
+          type: string
+          format: date-time
+          description: The timestamp when the form was created.
+        questions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Question'
+      required:
+        - id
+        - title
+        - creator_user_id
+        - questions
+
+    Question:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the question.
+        text:
+          type: string
+          description: The text of the question.
+          example: "How satisfied were you?"
+        type:
+          type: string
+          description: The type of question.
+          enum: # Assuming these are the possible types
+            - text
+            - rating
+            - choice
+            - checkbox
+          example: "rating"
+        options:
+          type: array
+          items:
+            type: string
+          description: Possible options for choice or rating questions.
+          nullable: true
+          example: ["1", "2", "3", "4", "5"]
+        is_required:
+          type: boolean
+          description: Indicates if the question requires an answer.
+          example: true
+      required:
+        - id
+        - text
+        - type
+        - is_required
+
+    # Schema for the request body when creating a form
+    CreateFormRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          description: The title of the new form.
+          example: "Customer Feedback Survey"
+        description:
+          type: string
+          description: A brief description of the new form.
+          nullable: true
+          example: "Please provide your valuable feedback."
+        creator_user_id:
+          type: string
+          description: The ID of the user who is creating the form.
+          example: "user_123"
+        questions:
+          type: array
+          items:
+            $ref: '#/components/schemas/CreateQuestionRequest' # Simplified question schema for creation
+      required:
+        - title
+        - creator_user_id
+        - questions
+
+    # Schema for question objects within the CreateFormRequest
+    CreateQuestionRequest:
+      type: object
+      properties:
+        text:
+          type: string
+          description: The text of the question.
+          example: "How satisfied were you?"
+        type:
+          type: string
+          description: The type of question.
+          enum:
+            - text
+            - rating
+            - choice
+            - checkbox
+          example: "rating"
+        options:
+          type: array
+          items:
+            type: string
+          description: Possible options for choice or rating questions.
+          nullable: true
+          example: ["1", "2", "3", "4", "5"]
+        is_required:
+          type: boolean
+          description: Indicates if the question requires an answer.
+          example: true
+      required:
+        - text
+        - type
+        - is_required # ID is generated by the server
+
+    Response:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the response submission.
+        form_id:
+          type: string
+          format: uuid
+          description: The ID of the form this response is for.
+        respondent_user_id:
+          type: string
+          description: The ID of the user who submitted the response.
+          example: "user_456"
+        submitted_at:
+          type: string
+          format: date-time
+          description: The timestamp when the response was submitted.
+        answers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Answer'
+      required:
+        - id
+        - form_id
+        - respondent_user_id
+        - answers
+
+    Answer:
+      type: object
+      properties:
+        question_id:
+          type: string
+          format: uuid
+          description: The ID of the question being answered.
+          example: "ad3612c5-bcce-4117-84a7-5d87d984202e"
+        value:
+          # The value type might depend on the question type (string, number, array of strings).
+          # Using 'string' is safe based on the example, or 'object' with different properties,
+          # or 'oneOf' might be needed for more complex scenarios.
+          type: string
+          description: The value of the answer. Can be rating, text, selected option ID, etc.
+          example: "5"
+      required:
+        - question_id
+        - value
+
+    # Schema for the request body when submitting a response
+    SubmitResponseRequest:
+      type: object
+      properties:
+        respondent_user_id:
+          type: string
+          description: The ID of the user submitting the response.
+          example: "user_456"
+        answers:
+          type: array
+          items:
+            $ref: '#/components/schemas/SubmitAnswerRequest' # Simplified answer schema for submission
+      required:
+        - respondent_user_id
+        - answers
+
+    # Schema for answer objects within the SubmitResponseRequest
+    SubmitAnswerRequest:
+      type: object
+      properties:
+        question_id:
+          type: string
+          format: uuid
+          description: The ID of the question being answered.
+          example: "ad3612c5-bcce-4117-84a7-5d87d984202e"
+        value:
+          # Value type might be strict based on question type in a real API
+          type: string # Using string based on your example
+          description: The value of the answer (e.g., rating, text content, selected option).
+          example: "5"
+      required:
+        - question_id
+        - value

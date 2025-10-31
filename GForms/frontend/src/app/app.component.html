@@ -1,0 +1,59 @@
+<clr-main-container>
+  <header class="header-3">
+    <div class="branding">
+      <a class="nav-link">
+        <span class="title">GForms app</span>
+      </a>
+    </div>
+
+    <nav class="header-nav">
+      <a routerLink="/" class="nav-link nav-text">Home</a>
+    </nav>
+
+
+    <div class="header-actions">
+      @if (userLogged$ | async; as username) {
+        <div class="nav-text nav-link">Welcome, {{ username }}</div>
+        <a (click)="logout()" class="nav-link nav-text" style="cursor: pointer;">
+          Logout
+        </a>
+        <a href="javascript://" class="nav-link">
+          <cds-icon shape="cog"></cds-icon>
+        </a>
+      } @else {
+        <a routerLink="/account/login" class="nav-link nav-text">Login</a>
+        <a routerLink="/account/register" class="nav-link nav-text">Register</a>
+      }
+    </div>
+  </header>
+
+  <div class="content-container">
+    <div class="content-area">
+      <!-- Show loading indicator -->
+      <div *ngIf="isLoading" class="loading-indicator">
+        Loading... <!-- Or use a Clarity spinner -->
+      </div>
+
+      <!-- Show error message -->
+      <div *ngIf="error" class="alert alert-danger">
+        {{ error }}
+      </div>
+
+      <!-- Render routed components when not loading and no error -->
+      <router-outlet *ngIf="!isLoading && !error"></router-outlet>
+    </div>
+
+    <div class="content-container">
+      <div class="content-area" style="margin:20px">
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+  </div>
+
+</clr-main-container>
+
+<footer class="app-footer">
+  <div class="footer-content clr-text-center">
+    <span>&copy; 2024 GForms App</span>
+  </div>
+</footer>

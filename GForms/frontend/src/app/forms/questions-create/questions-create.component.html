@@ -1,0 +1,84 @@
+<div class="container mt-5">
+  <h2>Create Form Questions</h2>
+  <!-- This form binds to an onSubmit method in your component -->
+  <form (ngSubmit)="onSubmit()">
+    <!-- Loop through the 'questions' array in your component -->
+    <div class="clr-row">
+      @for (question of questions; track question.id; let i = $index) {
+      <div class="clr-col-lg-4 clr-col-md-6 clr-col-sm-12">
+        <div class="card">
+          <div class="card-header">
+            Question {{ i + 1 }}
+          </div>
+          <div class="card-block">
+            <div class="card-text">
+              <!-- Title Input -->
+              <div class="clr-form-control">
+                <label for="title{{i}}" class="clr-control-label">Title</label>
+                <!-- Two-way data binding for the question title -->
+                <div class="clr-control-container" style="width:100%">
+                  <input type="text" class="clr-input" id="title{{i}}" name="title{{i}}" style="width:100%;"
+                    [(ngModel)]="question.text" required>
+                </div>
+              </div>
+
+
+              <div class="clr-form-control">
+                <!-- Type Select -->
+                <clr-combobox-container>
+                  <label class="clr-control-label" for="type{{i}}">Type</label>
+                  <clr-combobox [(ngModel)]="question.type" required name="type{{i}}" id="type{{i}}" (clrSelectionChange)="clearOptions(i)">
+                    <clr-options>
+                      <clr-option [clrValue]="'text'">Text</clr-option>
+                      <clr-option [clrValue]="'number'">Number</clr-option>
+                      <clr-option [clrValue]="'select'">Select</clr-option>
+                      <clr-option [clrValue]="'checkbox'">Checkbox</clr-option>
+                    </clr-options>
+                  </clr-combobox>
+                </clr-combobox-container>
+              </div>
+
+              @if (question.type === 'select') {
+              <div class="clr-form-control">
+                <label for="options{{i}}" class="clr-control-label">Options (separate by ';')</label>
+                <div class="clr-control-container" style="width:100%">
+                  <input type="text" class="clr-input" id="options{{i}}" name="options{{i}}" style="width:100%;"
+                    [(ngModel)]="question.extra_info">
+                </div>
+              </div>
+              }
+
+              @if (question.type === 'checkbox') {
+              <div class="clr-form-control">
+                <label for="options{{i}}" class="clr-control-label">Options (separate by ';')</label>
+                <div class="clr-control-container" style="width:100%">
+                  <input type="text" class="clr-input" id="options{{i}}" name="options{{i}}" style="width:100%;"
+                    [(ngModel)]="question.extra_info">
+                </div>
+              </div>
+              }
+
+              <!-- Is Required Checkbox -->
+              <div class="clr-checkbox-wrapper">
+                <input type="checkbox" id="isRequired{{i}}" name="isRequired{{i}}" [(ngModel)]="question.is_required"
+                  class="clr-checkbox">
+                <label for="isRequired{{i}}" class="clr-control-label">Required</label>
+              </div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <!-- Remove Button -->
+            <button type="button" class="btn btn-sm btn-danger" (click)="removeQuestion(i)">Remove</button>
+            <!-- Made button smaller -->
+          </div>
+        </div>
+      </div>
+      }
+    </div>
+
+    <!-- Action Buttons -->
+    <button type="button" class="btn btn-sm btn-secondary" (click)="addQuestion()">Add Question</button>
+    <button type="submit" class="btn btn-sm btn-primary">Submit Questions</button>
+    <!-- Changed submit text slightly -->
+  </form>
+</div>
