@@ -44,6 +44,10 @@ type Transaction struct {
 	active   bool
 }
 
+var Metrics struct {
+	trx int32
+}
+
 // Begin starts a new transaction for the specified bank account.
 // It locks the data store and creates a snapshot of the account state.
 // Returns a Transaction object that must be either committed or rolled back.
@@ -312,6 +316,7 @@ func processBulkTransfer(request *BulkTransferRequest) error {
 	// Calculate total amount needed (using pre-parsed AmountCents)
 	var totalAmount uint64
 	for i, transfer := range request.Transfers {
+		Metrics.trx += 1
 		if _, err := ValidateTransfer(&transfer); err != nil {
 			return fmt.Errorf("validation failed for transfer %d (%s): %w", i, transfer.MerchantTrxID, err)
 		}
